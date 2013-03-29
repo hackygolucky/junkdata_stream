@@ -1,7 +1,7 @@
 // Junk data stream
 var through = ('through')
 
-
+module.exports = stream_existing
 
 function template_mapping(template) {
 	var result = {}
@@ -17,18 +17,30 @@ function template_mapping(template) {
 	return result
 }
 
-function myStream(ttl, mappings) {
+function stream_existing(mappings, ttl) {
 	// returns a stream
-	return through(function write(data) {
-		this.queue(data)
-	}, 
+	var out = through()
+		, idx = 0
 
-	function end() {
-		this.queue(null) // do we want this to end? This is optional.
+	setInterval(write, 1000)
+	if (timeoutId === ttl) {
+		function end() {
+			out.queue(null)
+		}
 	}
-	}
+	return out
 
-myStream.on('data', console.log)
+	function write() {
+		if(idx === mappings.length) {
+			out.queue(null)
+			return
+		}
+		out.queue(mappings[idx++].count)
+	}
+}
+ 
+
+
 
 
 
