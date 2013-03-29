@@ -1,20 +1,15 @@
-var junkdata_stream = require('junkdata-stream')
-	, through = require('through')
+// Junk data stream
+var junkdata_server = require('/junkdata-server')(33, {keyname: Number})
  
-var server = junkdata(
-  33  // milliseconds between junk!
-, {   // shape of junk!
-    keyname: Number
-  , otherKey: String
-  , someOtherKey: Boolean
-  }
-)
- 
-through(function write(data) {
+ through(function write(data) {
 	this.queue(data) 
-}, 
-	function end() {
-		this.queue(null) // do we need this to end? This is optional.
+	for (key in junkdata_server) {
+		junkdata_server.key = data
 	}
 
-junkdata_stream.on('data', console.log)
+	}, 
+	function end() {
+		this.queue(null) // do we want this to end? This is optional.
+	}
+
+junkdata_server.listen(8000)
